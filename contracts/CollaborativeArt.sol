@@ -1,17 +1,29 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// base project : init (starter)
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
+
+// project : develop
 contract CollaborativeArt{
-    address public owner;
+    using ECDSA for bytes32;
+
     struct Artist{
         address artistAddress;
         uint256 ownershipPercentage;
     }
+    struct Milestone{
+        string description;
+        uint256 deadline;
+        bool completed;
+    }
+
+    address public owner;
     Artist[] public artists;
+    Milestone[] public milestones;
 
     mapping(address => uint256) public artistToOwnershipPercentage;
-    mapping(address => bool) public isArtist;
+    mapping(address => bool) public artistSigned;
     uint256 public totalPercentage = 0;
     uint256 public artworkPrice;
 
@@ -24,7 +36,7 @@ contract CollaborativeArt{
     }
 
     modifier onlyArtist() {
-        require(isArtist[msg.sender], "Only an artist can call this function");
+        require(artistSigned[msg.sender], "Only an artist can call this function");
         _;
     }
 
@@ -38,7 +50,7 @@ contract CollaborativeArt{
         Artist memory newArtist = Artist(_artistAddress, _ownershipPercentage);
         artists.push(newArtist);
         artistToOwnershipPercentage[_artistAddress] = _ownershipPercentage;
-        isArtist[_artistAddress] = true;
+        artistSigned[_artistAddress] = true;
         totalPercentage += _ownershipPercentage;
     }
 
