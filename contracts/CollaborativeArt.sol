@@ -79,7 +79,7 @@ contract CollaborativeArt is EIP712{
         artistSigned[msg.sender] = true;
         emit ArtistSigned(msg.sender);
     }
-    
+
     // base function artwork price
     function setArtworkPrice(uint256 _price) public onlyOwner{
         artworkPrice = _price;
@@ -96,7 +96,9 @@ contract CollaborativeArt is EIP712{
     function distributeFunds() private{
         for (uint256 i = 0; i < artists.length; i++){
             Artist memory artist = artists[i];
-            payable(artist.artistAddress).transfer((artworkPrice * artist.ownershipPercentage )/100);
+            if(artistSigned[artist.artistAddress]){
+                payable(artist.artistAddress).transfer((artworkPrice * artist.ownershipPercentage )/100);
+            }
         }
     }
 

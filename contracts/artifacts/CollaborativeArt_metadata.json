@@ -532,11 +532,11 @@
 			]
 		},
 		"contracts/CollaborativeArt.sol": {
-			"keccak256": "0x92fd6b3e1fa93b3efa7cf2cf45f72ef1594a297ec3623b291c08ad3b60a3179b",
+			"keccak256": "0x250e2a34873f2390b39935fbe46ea19ca9b1244a41750066d4f43a7a41b1c4ec",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://9fc03b1959235e3d7187332c8c9a0314373584493be92210ca4bd4113ef5290e",
-				"dweb:/ipfs/QmbRWyQoUvVM35UPTgi93HLDSuPJ2Q5WGJ3PkmRLVHWLuf"
+				"bzz-raw://c666db1367d4a67748161520d3f081e6fa79542358e4019c5edac45653a43c0c",
+				"dweb:/ipfs/QmawfoQCWXpCEK1jXjEQNCk4RnaG2TQqjUaxLbqDgAiqMC"
 			]
 		}
 	},
