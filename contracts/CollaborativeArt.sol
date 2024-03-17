@@ -1,19 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 // project : develop
-contract CollaborativeArt is EIP712, ReentrancyGuard{
-    using ECDSA for bytes32;
-
+contract CollaborativeArt is ERC721URIStorage, Ownable, ReentrancyGuard{
+    using EnumerableSet for EnumerableSet.AddressSet;
+    using Counters for Counters.Counter;
+    
     struct Artist{
         address artistAddress;
         uint256 ownershipPercentage;
+        bool hasSigned;
     }
+
     struct Milestone{
         string description;
         uint256 deadline;
@@ -25,9 +31,24 @@ contract CollaborativeArt is EIP712, ReentrancyGuard{
         Milestone[] milestones;
         uint256 totalBudget;
     }
+    // test dispute
+    struct Dispute{
+        string description;
+        EnumerableSet.AddressSet voters;
+        uint256 affirmativeVotes;
+        bool resolved;
+        bool decision;
+    }
+
+    // dispute global
+    EnumerableSet.AddressSet private artists;
+    mapping(address => Artist) public artistDetails;
+    Counters.Counter private _tokenIds;
+    Counters.Counter private _disputeIds;
+    mapping(uint256 => Dispute) public disputes;
 
     address public owner;
-    Artist[] public artists;
+    // Artist[] public artists;
     Phase[] public phases;
 
     mapping(address => uint256) private artistToOwnershipPercentage;
@@ -36,11 +57,18 @@ contract CollaborativeArt is EIP712, ReentrancyGuard{
     uint256 public artworkPrice;
     IERC20 public paymentToken;
 
+    event ArtistAdded(address indexed artist, uint256 ownershipPercentage);
+    // dispute event
+    event DisputeCreated(uint256 indexed disputeId, string description);
+    event DisputeVoted(uint256 indexed disputeId, address indexed voter, bool vote);
+    event DisputeResolved(uint256 indexed disputeId, bool decision);
     event PhaseAdded(string phaseName);
     event MilestoneCompleted(uint256 phaseIndex, uint256 milestoneIndex,string description);
     event ArtworkSold(uint256 price, string message);
     event DisputeResolved(string message);
-    event ArtistSigned(address artist);
+    event ArtistSigned(address indexed artist);
+    event ArtworkMinted(address indexed owner, uint256 indexed tokenId, string tokenURI);
+
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only the owner can call this function");
