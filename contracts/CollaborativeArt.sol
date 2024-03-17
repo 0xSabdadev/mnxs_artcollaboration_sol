@@ -4,9 +4,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 // project : develop
 contract CollaborativeArt is EIP712, ReentrancyGuard{
+    using ECDSA for bytes32;
+
     struct Artist{
         address artistAddress;
         uint256 ownershipPercentage;
@@ -30,7 +33,7 @@ contract CollaborativeArt is EIP712, ReentrancyGuard{
     mapping(address => uint256) private artistToOwnershipPercentage;
     mapping(address => bool) private artistSigned;
     uint256 public totalOwnershipPercentage = 0;
-    // uint256 public artworkPrice;
+    uint256 public artworkPrice;
     IERC20 public paymentToken;
 
     event PhaseAdded(string phaseName);
@@ -105,16 +108,19 @@ contract CollaborativeArt is EIP712, ReentrancyGuard{
     // base function purchase
     function purchaseArtwork() public payable{
         require(msg.value == artworkPrice, "Payment must equal to art price");
-        distributeFunds();
+        distributeFunds(msg.value);
         emit ArtworkSold(artworkPrice, "artwork sold");
     }
 
     // base func pay
-    function distributeFunds() private{
+    function distributeFunds(uint256 _amount) public onlyOwner nonReentrant {
+        require(paymentToken.transferFrom(msg.sender,address(this), _amount),"Payment tx failed");
         for (uint256 i = 0; i < artists.length; i++){
             Artist memory artist = artists[i];
             if(artistSigned[artist.artistAddress]){
-                payable(artist.artistAddress).transfer((artworkPrice * artist.ownershipPercentage )/100);
+                uint256 payment = (_amount * artist.ownershipPercentage)/100;
+                // payable(artist.artistAddress).transfer((artworkPrice * artist.ownershipPercentage )/100);
+                require(paymentToken.transfer(artist.artistAddress,payment),"Payment to artist failed");
             }
         }
     }
