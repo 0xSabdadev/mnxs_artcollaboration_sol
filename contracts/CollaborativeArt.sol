@@ -54,7 +54,7 @@ contract CollaborativeArt is EIP712, ReentrancyGuard{
         paymentToken = IERC20(_paymentToken);
     }
 
-    // base function add
+    // function add artist : 
     function addArtist(address _artistAddress, uint256 _ownershipPercentage) public onlyOwner{
         require(totalOwnershipPercentage + _ownershipPercentage <=100,"Total Ownership max 100%");
         Artist memory newArtist = Artist(_artistAddress, _ownershipPercentage);
@@ -64,15 +64,24 @@ contract CollaborativeArt is EIP712, ReentrancyGuard{
         totalOwnershipPercentage += _ownershipPercentage;
     }
 
-    // base func milestone
-    function addMilestone(string memory _description, uint256 _deadline) public onlyOwner{
-        milestones.push(Milestone(_description,_deadline,false));
+    // function milestone :
+    function addPhase(string memory _phaseName) public onlyOwner{
+        phases.push(Phase(_phaseName,new Milestone,0));
+        emit PhaseAdded(_phaseName);
     }
 
-    function markMilestoneAsCompleted(uint256 _index) public onlyOwner{
-        Milestone storage milestone = milestones[_index];
+    function addMilestoneToPhase(uint256 _phaseIndex, uint256 _milestoneIndex) public onlyOwner{
+        Phase storage phase = phases[_phaseIndex];
+        Milestone storage milestone = phase.milestones[_milestoneIndex];
         milestone.completed = true;
-        emit MilestoneCompleted(_index, milestone.description);
+        emit MilestoneCompleted(_phaseIndex, _milestoneIndex, milestone.description);
+    }
+
+    function markMilestoneAsCompleted(uint256 _phaseIndex, uint256 _milestoneIndex) public onlyOwner{
+        Phase storage phase = phases[_phaseIndex];
+        Milestone storage milestone = phase.milestones[_milestoneIndex];
+        milestone.completed = true;
+        emit MilestoneCompleted(_phaseIndex, _milestoneIndex, milestone.description);
     }
 
     // base func sign
