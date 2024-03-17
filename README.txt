@@ -6,8 +6,7 @@ The objective of this smart contract assignment is to facilitate a collaborative
 between two or more artists while ensuring fair compensation, clear ownership rights, and
 dispute resolution mechanisms.
 
-## Support
+## License
 
-For support, email fake@fake.com or join our Slack channel.
-
+[MIT](https://choosealicense.com/licenses/mit/)
 
