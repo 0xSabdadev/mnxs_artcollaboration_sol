@@ -4,7 +4,7 @@
 
 The objective of this smart contract assignment is to facilitate a collaborative art project
 between two or more artists while ensuring fair compensation, clear ownership rights, and
-dispute resolution mechanisms.
+dispute resolution mechanisms. [tests]
 
 ## License
 
