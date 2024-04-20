@@ -33,9 +33,8 @@ contract CollaborativeArt is ERC721URIStorage, Ownable, ReentrancyGuard {
         mapping(uint256 => Milestone) milestones;
         uint256 totalBudget;
         string exhibition;
-        uint256 milestoneCount; // Menyimpan jumlah milestone dalam fase
+        uint256 milestoneCount; 
     }
-
 
     struct Dispute {
         string description;
@@ -133,12 +132,10 @@ contract CollaborativeArt is ERC721URIStorage, Ownable, ReentrancyGuard {
         
         Phase storage phase = phases[_phaseIndex];
         
-        // Tambahkan milestone baru ke fase
         uint256 milestoneId = phase.milestoneCount;
         phase.milestones[milestoneId] = Milestone(_description, _deadline, false, _budget);
         phase.totalBudget += _budget;
         
-        // Tingkatkan jumlah milestone dalam fase
         phase.milestoneCount++;
         
         emit MilestoneAdded(_phaseIndex, milestoneId, _description);
@@ -151,20 +148,13 @@ contract CollaborativeArt is ERC721URIStorage, Ownable, ReentrancyGuard {
         
         Phase storage phase = phases[_phaseIndex];
         
-        // Periksa apakah indeks milestone yang diberikan valid
         require(_milestoneIndex < phase.milestoneCount, "Invalid milestone index");
-        
-        // Periksa apakah milestone sudah selesai
         require(!phase.milestones[_milestoneIndex].completed, "Milestone already completed");
 
-        // Tandai milestone sebagai selesai
         phase.milestones[_milestoneIndex].completed = true;
 
-        // Emit event
         emit MilestoneCompleted(_phaseIndex, _milestoneIndex, phase.milestones[_milestoneIndex].description);
     }
-
-
 
     function signContract(bytes calldata _signature) external {
         require(artists.contains(msg.sender), "Must be an artist of the project");
@@ -218,12 +208,8 @@ contract CollaborativeArt is ERC721URIStorage, Ownable, ReentrancyGuard {
 
     function createDispute(uint256 _disputeId, string memory _description, uint256 _resolutionDeadline, uint256 _arbitrationFee) external onlyArtist {
         require(!disputes[_disputeId].resolved, "Dispute already resolved");
+        address[] memory votersTemp; 
 
-        address[] memory votersTemp; // Gunakan "memory" di sini
-        // Inisialisasi votersTemp
-        // Lakukan apa yang diperlukan untuk mengisi votersTemp, misalnya melalui penggunaan fungsi lain
-
-        // Salin semua elemen dari votersTemp ke disputes[_disputeId].voters
         for (uint256 i = 0; i < votersTemp.length; i++) {
             disputes[_disputeId].voters.add(votersTemp[i]);
         }

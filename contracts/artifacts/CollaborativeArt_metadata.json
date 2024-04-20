@@ -1396,11 +1396,11 @@
 			]
 		},
 		"contracts/CollaborativeArt.sol": {
-			"keccak256": "0xde715597b54429e214d2969dc456882294eae44c4a0dd79608a1541bb4b7f936",
+			"keccak256": "0x598d945a017033e4e6b532d3a9ac50c1d6a8bf37adbb3951cc5f8b20d879c8a0",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://19405972ec1dd06678a58b0ddd8de25794e49314f799c2e1fb617c1276ab2ccb",
-				"dweb:/ipfs/Qmcpm3GSGNVZAvFwdHAxhDfisBaQVY6CX2pU44AMBH8Wzj"
+				"bzz-raw://04859b76d7a5ce5fa0629e4222e8071cf273bd97ba49cd50968e65daf50b6a69",
+				"dweb:/ipfs/QmPT5zGNPZyTVqHVnSwiZuYUWioc3jZH6JLiuRvd5Mv1t6"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.9.3/contracts/access/Ownable.sol": {
